@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { Button } from '@/components/ui/button';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -64,12 +65,9 @@ export default function Login() {
             />
           </div>
 
-          <button
-            type="submit"
-            className="w-full px-4 py-2 font-medium text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
+          <Button type="submit" className='w-full'>
             Login
-          </button>
+          </Button>
         </form>
 
         {message && <p className="mt-4 text-center text-green-500">{message}</p>}
