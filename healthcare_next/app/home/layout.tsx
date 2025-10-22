@@ -1,14 +1,18 @@
+import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupContent, 
     SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, 
     SidebarMenuItem, SidebarProvider, 
     SidebarTrigger} from "@/components/ui/sidebar";
 
 import { Calendar, Inbox, Search, Settings } from "lucide-react"
+import Chat from "../chat";
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
 
     return (
         <div>
+            <ResizablePanelGroup direction="horizontal">
+            <ResizablePanel>
             <SidebarProvider>
                 <Sidebar id="left">
                     <SidebarHeader>
@@ -57,6 +61,12 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                     {children}
                 </main>
             </SidebarProvider>
+            </ResizablePanel>
+            <ResizableHandle />
+            <ResizablePanel className="w-sm max-w-sm">
+                <Chat/>
+            </ResizablePanel>
+            </ResizablePanelGroup>
         </div>
     )
 }
