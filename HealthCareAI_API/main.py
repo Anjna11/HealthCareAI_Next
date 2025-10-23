@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from pymongo import MongoClient
+import json
+from ai import get_compilation
 
 app = FastAPI()
 
@@ -28,6 +30,8 @@ class LoginRequest(BaseModel):
     email: str
     password: str
 
+  
+
 @app.post("/login")
 def login(user: LoginRequest):
     existing_user = users_collection.find_one({"email": user.email})
@@ -49,3 +53,17 @@ def get_patients():
         })
 
     return{"patients": patients_list}
+
+class Message(BaseModel):
+    text: str 
+
+@app.post("/message")
+def message(msg: Message):
+
+    patient_info_str = get_compilation(msg.text)
+    patient_info = json.loads(patient_info_str)
+    print(patient_info)
+
+    patients_collection.insert_one(patient_info)
+
+    return {"message": "Patient info inserted successfully!"}
