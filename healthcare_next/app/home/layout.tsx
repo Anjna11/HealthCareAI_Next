@@ -28,7 +28,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                                 <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
                                     <a href='/home/patients'>
-                                    <Settings />
+                                    <Inbox />
                                     <span>All Patients</span>
                                     </a>
                                 </SidebarMenuButton>
@@ -39,7 +39,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                                 <SidebarMenuItem>
                                 <SidebarMenuButton asChild>
                                     <a href='#'>
-                                    <Settings />
+                                    <Calendar />
                                     <span>Approtments</span>
                                     </a>
                                 </SidebarMenuButton>

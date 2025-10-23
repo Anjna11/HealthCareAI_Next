@@ -1,3 +1,5 @@
+"use client";
+import { useEffect, useState } from "react"
 import {
     Table,
     TableBody,
@@ -10,42 +12,41 @@ import {
 
 export default function Patients() {
 
-    const patients_ls = [
-        {
-            name: "ABC",
-            age: 12
-        },
-        {
-            name: "XYZ",
-            age: 12
-        },
-        {
-            name: "XYZ",
-            age: 12
+    const [patients, setpatients] = useState([])
+    
+    useEffect (() => {
+        const fetchPatients = async () => {
+            try{
+                const res = await fetch('http://127.0.0.1:8000/patients')
+                const data = await res.json()
+                setpatients(data.patients);
+            
+            }catch(err){
+                console.error("Failed to fetch patients:", err)
+            }
         }
-    ]
+        fetchPatients()
+    }, [])
 
     return (
         <Table>
-            <TableCaption>A list of your recent invoices.</TableCaption>
-            <TableHeader>
-                <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Age</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {
-                    patients_ls.map((item, index) => {
-                      return (
-                        <TableRow key={index}>
-                            <TableCell>{item.name}</TableCell>
-                            <TableCell>{item.age}</TableCell>
-                        </TableRow>
-                      )  
-                    })
-                }
-            </TableBody>
-        </Table>
+        <TableCaption>List of Patients</TableCaption>
+        <TableHeader>
+          <TableRow>
+          <TableHead>Id</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Age</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {patients.map((p) => (
+            <TableRow key={p.id}>
+                <TableCell>{p.id}</TableCell>
+              <TableCell>{p.fname} {p.lname}</TableCell>
+              <TableCell>{p.age}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     )
 }
