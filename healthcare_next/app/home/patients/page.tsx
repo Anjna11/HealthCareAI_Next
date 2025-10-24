@@ -32,7 +32,7 @@ export default function Patients() {
         <Table>
         <TableCaption>List of Patients</TableCaption>
         <TableHeader>
-          <TableRow>
+          <TableRow >
           <TableHead>Id</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Age</TableHead>
@@ -40,7 +40,7 @@ export default function Patients() {
         </TableHeader>
         <TableBody>
           {patients.map((p) => (
-            <TableRow key={p.id}>
+            <TableRow key={p.id} className="hover:bg-[#11224E]/70 hover:text-white">
                 <TableCell>{p.id}</TableCell>
               <TableCell>{p.fname} {p.lname}</TableCell>
               <TableCell>{p.age}</TableCell>

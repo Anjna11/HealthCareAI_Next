@@ -22,3 +22,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+- what do using text box
+- openmrs visit and planning
