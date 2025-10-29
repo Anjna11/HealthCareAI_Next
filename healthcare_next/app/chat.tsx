@@ -9,15 +9,37 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
     const [text, setText] = useState("");
 
     const handleSend = async () => {
-        if(!text) return;
-        await fetch('http://127.0.0.1:8000/message', {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text }),
+      if (!text.trim()) return;
+    
+      try {
+        const res = await fetch('http://127.0.0.1:8000/message', {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ text }),
         });
-        setText("");
-        onChange("Demo");
-    }
+    
+        const data = await res.json();
+    
+        if (data.error) {
+          alert("❌ " + data.error);
+          return;
+        }
+    
+        if (data.message) {
+          alert("ℹ️ " + data.message);
+          return;
+        }
+    
+        alert("✅ Success");
+    
+      } catch (err) {
+        alert("⚠️ Server not responding");
+      }
+    
+      setText("");
+      onChange("Demo");
+    };
+    
     
     return (
 <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow-md max-w-md mx-auto">
