@@ -94,48 +94,48 @@ def message(msg: Message):
         patient_info = get_compilation(msg.text)
         print("patient_info=", patient_info)
 
-        action = patient_info["action"]
+        action = patient_info.get("action")
         pid = patient_info.get("pid")
-        fname = patient_info["name"].get("fname")
-        lname = patient_info["name"].get("lname", "")
+        fname = patient_info.get("name", {}).get("fname")
+        lname = patient_info.get("name", {}).get("lname", "")
         age = patient_info.get("age")
         appointment = patient_info.get("appointment")
-        reasoning = patient_info.get("reasoning", "")
+        reasoning = patient_info.get("reasoning", "No reasoning provided.")
 
-        if action is None or action == "none":
-            return {"message": f"You said: {msg.text}"}
+        # Default: if no recognizable action
+        if not action or action == "none":
+            return {
+                "message": f"You said: {msg.text}",
+                "reasoning": reasoning
+            }
 
-
+        # ---- ADD PATIENT ----
         if action == "add_patient":
             if not fname:
-                return {"message": "First name is required."}
-            
+                return {"message": "First name is required.", "reasoning": reasoning}
+
             if age is None or age == "" or not isinstance(age, int):
-                return {"message": "❗ Age is required to add a patient. Please specify age."}
+                return {
+                    "message": "❗ Age is required to add a patient. Please specify age.",
+                    "reasoning": reasoning
+                }
 
             new_patient = {
-                "name": {
-                    "fname": fname,
-                    "lname": lname
-                },
+                "name": {"fname": fname, "lname": lname},
                 "age": age
             }
             patients_collection.insert_one(new_patient)
 
             return {
-                "message": "Patient added successfully.",
-                "patient": {
-                    "fname": fname,
-                    "lname": lname,
-                    "age": age,
-                }
+                "message": "✅ Patient added successfully.",
+                "patient": {"fname": fname, "lname": lname, "age": age},
+                "reasoning": reasoning
             }
-        
 
-        
+        # ---- UPDATE PATIENT ----
         if action == "update_patient":
             if not pid:
-                return {"message": "Patient ID or number is required to update."}
+                return {"message": "Patient ID or number is required to update.", "reasoning": reasoning}
 
             try:
                 real_id = ObjectId(pid)
@@ -143,11 +143,10 @@ def message(msg: Message):
                 real_id = get_patient_id_from_number(pid)
 
             if not real_id:
-                return {"message": "Invalid patient number or ID."}
+                return {"message": "Invalid patient number or ID.", "reasoning": reasoning}
 
             update_data = {}
-
-            if fname: 
+            if fname:
                 update_data["name.fname"] = fname
             if lname:
                 update_data["name.lname"] = lname
@@ -155,20 +154,16 @@ def message(msg: Message):
                 update_data["age"] = age
 
             if not update_data:
-                return {"message": "No valid update fields provided."}
+                return {"message": "No valid update fields provided.", "reasoning": reasoning}
 
-            result = patients_collection.update_one(
-                {"_id": real_id},
-                {"$set": update_data}
-            )
+            result = patients_collection.update_one({"_id": real_id}, {"$set": update_data})
 
             if result.modified_count == 0:
-                return {"message": "No changes made. Patient may not exist."}
+                return {"message": "No changes made. Patient may not exist.", "reasoning": reasoning}
 
-            return {"message": f"✅ Patient updated successfully."}
+            return {"message": "✅ Patient updated successfully.", "reasoning": reasoning}
 
-        
-        
+        # ---- DELETE PATIENT ----
         if action == "delete_patient":
             if pid:
                 try:
@@ -176,20 +171,19 @@ def message(msg: Message):
                 except:
                     real_id = get_patient_id_from_number(pid)
             else:
-                return {"message": "Patient number or ID required."}
+                return {"message": "Patient number or ID required.", "reasoning": reasoning}
 
             result = patients_collection.delete_one({"_id": real_id})
 
             if result.deleted_count == 1:
-                return {"message": f"Patient {pid} deleted successfully."}
+                return {"message": f"Patient {pid} deleted successfully.", "reasoning": reasoning}
             else:
-                return {"message": f"No patient found with id {pid}."}
-            
-            
-            
+                return {"message": f"No patient found with id {pid}.", "reasoning": reasoning}
+
+        # ---- ADD APPOINTMENT ----
         if action == "add_appointment":
             if not appointment or not appointment.get("date") or not appointment.get("type"):
-                return {"message": "Appointment must include date & type."}
+                return {"message": "Appointment must include date & type.", "reasoning": reasoning}
 
             pid = patient_info.get("pid")
 
@@ -200,21 +194,19 @@ def message(msg: Message):
                     patient_id = get_patient_id_from_number(pid)
 
                 if not patient_id:
-                    return {"message": "Invalid patient number or ID."}
+                    return {"message": "Invalid patient number or ID.", "reasoning": reasoning}
 
                 patient = patients_collection.find_one({"_id": patient_id})
                 if not patient:
-                    return {"message": "Patient not found."}
-
+                    return {"message": "Patient not found.", "reasoning": reasoning}
             else:
                 if not fname or age is None:
-                    return {"message": "To create a new patient for appointment, name and age are required."}
+                    return {
+                        "message": "To create a new patient for appointment, name and age are required.",
+                        "reasoning": reasoning
+                    }
 
-                new_patient = {
-                    "name": {"fname": fname, "lname": lname},
-                    "age": age
-                }
-
+                new_patient = {"name": {"fname": fname, "lname": lname}, "age": age}
                 inserted = patients_collection.insert_one(new_patient)
                 patient_id = inserted.inserted_id
 
@@ -230,9 +222,12 @@ def message(msg: Message):
                     "patient_id": str(patient_id),
                     "date": appointment["date"],
                     "type": appointment["type"]
-                }
+                },
+                "reasoning": reasoning
             }
 
-    except Exception as e:
-        return {"error": str(e)}
+        # Default fallback
+        return {"message": f"Unrecognized action: {action}", "reasoning": reasoning}
 
+    except Exception as e:
+        return {"error": str(e), "reasoning": "Error occurred during processing."}
