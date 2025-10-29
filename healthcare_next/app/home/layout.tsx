@@ -50,9 +50,9 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                                 <SidebarMenuItem>
                                 <SidebarMenuButton asChild className="text-base p-4.5 pl-2 rounded-none"
                                      style={{ fontFamily: "'Poppins', sans-serif"}}>
-                                    <a href='#'>
+                                    <a href='/home/appointments'>
                                     <Calendar />
-                                    <span>Approtments</span>
+                                    <span>Appointment</span>
                                     </a>
                                 </SidebarMenuButton>
                                 </SidebarMenuItem>
