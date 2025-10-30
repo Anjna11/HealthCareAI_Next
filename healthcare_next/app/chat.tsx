@@ -5,6 +5,7 @@ import { useState } from "react";
 
 export default function Chat({ onChange }: { onChange: (val: string) => void }) {
   const [text, setText] = useState("");
+  const [reponse, setReponse] = useState("")
 
   const handleSend = async () => {
     if (!text.trim()) return;
@@ -19,16 +20,18 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
       const data = await res.json();
 
       if (data.error) {
-        alert("❌ " + data.error + "\n\n🧠 Reasoning: " + (data.reasoning || "No reasoning provided."));
+        setReponse(data.message + "\n" + data.reasoning)
+        // alert("❌ " + data.error + "\n\n🧠 Reasoning: " + (data.reasoning || "No reasoning provided."));
         return;
       }
 
       if (data.message) {
+        setReponse(data.message + "\n" + data.reasoning)
         // Show both message and reasoning if available
-        alert(
-          "💬 " + data.message +
-          (data.reasoning ? "\n\n🧠 Reasoning: " + data.reasoning : "")
-        );
+        // alert(
+        //   "💬 " + data.message +
+        //   (data.reasoning ? "\n\n🧠 Reasoning: " + data.reasoning : "")
+        // );
         return;
       }
 
@@ -49,6 +52,8 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
       >
         How can I help you?
       </p>
+
+      {reponse && <h3>{reponse}</h3>}
 
       <textarea
         value={text}
