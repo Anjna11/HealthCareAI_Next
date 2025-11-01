@@ -1,6 +1,6 @@
 'use client';
 import dynamic from 'next/dynamic';
-import { HeartPulse } from 'lucide-react'; // ✅ Added for the logo
+import { HeartPulse } from 'lucide-react';  
 
 const ResizablePanelGroup = dynamic(
   () => import('@/components/ui/resizable').then((m) => m.ResizablePanelGroup),
@@ -88,8 +88,8 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
               </SidebarContent>
 
               <SidebarFooter className="text-black bg-[#F87B1B]/95">
-                <p className="text-center" style={{ fontFamily: "'Poppins', sans-serif" }}>
-                  AnjnaJagatiya@gmail.com
+                <p className="text-center" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
+                  anjnajagatiya@gmail.com
                 </p>
               </SidebarFooter>
             </Sidebar>

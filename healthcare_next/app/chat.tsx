@@ -45,15 +45,24 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 bg-gray-50 rounded-lg shadow-md max-w-md mx-auto">
-      <p
-        className="text-lg font-heading text-gray-800"
-        style={{ fontFamily: "'Poppins', sans-serif" }}
-      >
-        How can I help you?
-      </p>
+    <div className="flex flex-col gap-5 p-5 bg-gray-50 rounded-lg shadow-md max-w-md mx-auto"
+          style={{ fontFamily: "'Times New Roman', Times, serif" }}>
 
-      {reponse && <h3>{reponse}</h3>}
+      <h3 className="text-lg font-semibold text-[#11224E] tracking-wide">
+        How can I help you?
+      </h3>
+
+    <div className="-my-1">
+      <hr className="border-[#F87B1B]/30" />
+    </div>
+
+    {reponse && (
+    <p
+      className="text-gray-800 text-justify leading-relaxed"
+      style={{ textAlign: 'justify', hyphens: 'auto' }}>
+      {reponse}
+    </p>
+    )}
 
       <textarea
         value={text}

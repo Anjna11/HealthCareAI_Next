@@ -129,9 +129,11 @@
   padding: 0 10px;
   border-radius: 0;
   background-color: #11224E;
+  border-radius: 5px;
 }
 
 .primary-button:hover {
   background-color: #F87B1B;
-  color: white
+  color: white;
+  border-radius: 5px;
 }

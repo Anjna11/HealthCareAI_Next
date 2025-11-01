@@ -27,9 +27,10 @@ export default function Patients() {
   }, []);
 
   return (
-    <div className="p-8 max-w-5xl mx-auto">
+    <div className="p-8 max-w-5xl mx-auto" style={{ fontFamily: "'Poppins', sans-serif" }}>
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h1 className="text-3xl font-semibold mb-6 text-[#11224E] tracking-wide">
+        <h1 className="text-3xl font-semibold mb-6 text-[#11224E] tracking-wide"
+              style={{ fontFamily: "'Times New Roman', Times, serif" }}>
           Patient Records
         </h1>
 
