@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from pymongo import MongoClient
 import json
 from ai import get_compilation
-from bson import ObjectId
+from bson.objectid import ObjectId, InvalidId
 
 app = FastAPI()
 
@@ -18,11 +18,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-client = MongoClient("mongodb+srv://doadmin:578032ZuyX9phjl6@db-mongodb-nyc3-95469-680cf585.mongo.ondigitalocean.com")
-db = client["healthcare_db"]
+client = MongoClient("mongodb://admin:admin123@localhost:27017/?authSource=admin")
+db = client["Healthcare_db"]
 users_collection = db["Users"]
-patients_collection = db["Patients"]
+patients_collection = db["PatientRecords"]
 appointments_collection = db["Appointment"]
+doctors_collection = db["Doctors"]
 
 @app.get("/")
 def demo():
@@ -51,7 +52,8 @@ def get_patients():
             "id": str(p["_id"]),
             "fname": p["name"].get("fname"),
             "lname": p["name"].get("lname"),
-            "age": p.get("age")
+            "age": p.get("age"),
+            "gender": p.get("gender")
         })
 
     return{"patients": patients_list}
@@ -62,14 +64,26 @@ def get_appointments():
     appointments_list = []
 
     for a in appointments_cursor:
+        patient_id_str = a.get("patient_id")
+        patient = None
+
+        # Check if patient_id is a valid ObjectId
+        try:
+            patient_obj_id = ObjectId(patient_id_str)
+            patient = patients_collection.find_one({"_id": patient_obj_id})
+        except (InvalidId, TypeError):
+            patient = None
+
+    for a in appointments_cursor:
         patient = patients_collection.find_one({"_id": ObjectId(a["patient_id"])})
-        
         appointments_list.append({
             "id": str(a["_id"]),
             "patient_id": a["patient_id"],
             "patient_name": f"{patient['name']['fname']} {patient['name']['lname']}" if patient else "Unknown",
             "date": a.get("date"),
-            "type": a.get("type")
+            "type": a.get("type"),
+            "age": patient.get("age") if patient else None,
+            "gender": patient.get("gender") if patient else None
         })
 
     return {"appointments": appointments_list}
@@ -99,6 +113,7 @@ def message(msg: Message):
         fname = patient_info.get("name", {}).get("fname")
         lname = patient_info.get("name", {}).get("lname", "")
         age = patient_info.get("age")
+        gender = patient_info.get("gender")
         appointment = patient_info.get("appointment")
         reasoning = patient_info.get("reasoning", "No reasoning provided.")
 
@@ -122,18 +137,20 @@ def message(msg: Message):
 
             new_patient = {
                 "name": {"fname": fname, "lname": lname},
-                "age": age
+                "age": age,
+                "gender": gender
             }
             patients_collection.insert_one(new_patient)
 
             return {
                 "message": "✅ Patient added successfully.",
-                "patient": {"fname": fname, "lname": lname, "age": age},
+                "patient": {"fname": fname, "lname": lname, "age": age, "gender": gender},
                 "reasoning": reasoning
             }
 
         # ---- UPDATE PATIENT ----
         if action == "update_patient":
+
             if not pid:
                 return {"message": "Patient ID or number is required to update.", "reasoning": reasoning}
 
@@ -182,6 +199,7 @@ def message(msg: Message):
 
         # ---- ADD APPOINTMENT ----
         if action == "add_appointment":
+            
             if not appointment or not appointment.get("date") or not appointment.get("type"):
                 return {"message": "Appointment must include date & type.", "reasoning": reasoning}
 

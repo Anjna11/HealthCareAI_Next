@@ -14,6 +14,9 @@ def get_compilation(text: str):
         - name: include 'fname' and 'lname'
         - If only one name is given, use it as 'fname' and leave 'lname' empty
         - age: integer ONLY if clearly mentioned. Otherwise return null.
+        - gender: "male", "female", "other" or "prefer_not_to_say". 
+            Only set if clearly mentioned (e.g., male/female/he/she). 
+            If not mentioned, return null. Do not guess from the name. 
         - appointment: string (only if action is 'add_appointment')
     """
 
@@ -39,6 +42,7 @@ def get_compilation(text: str):
                         "required": ["fname"]
                     },
                     "age": {"type": "integer"},
+                    "gender": {"type": "string"},
                     "appointment": {
                         "type": "object",
                         "properties": {

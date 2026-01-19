@@ -1,5 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Table,
   TableBody,
@@ -12,6 +13,7 @@ import {
 
 export default function Appointments() {
   const [appointments, setAppointments] = useState([]);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -63,6 +65,8 @@ export default function Appointments() {
               {appointments.map((a, index) => (
                 <TableRow
                   key={a.id}
+                  onClick={() => router.push(`/home/appointments/profile?id=${a.id}&patient_name=${a.patient_name}
+                    &date=${a.date}&age=${a.age}&gender=${a.gender}`)}
                   className="hover:bg-[#11224E]/5 transition border-b border-gray-100"
                 >
                   <TableCell className="font-semibold text-left px-6 w-[70px]">

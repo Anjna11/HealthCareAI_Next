@@ -38,11 +38,11 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                 style={{ background: '#11224E' }}
               >
                 {/* ✅ Added logo from login page */}
-                <div className="flex flex-col items-center justify-center py-3">
+                <div className="flex flex-col items-center justify-center">
                   <div className="flex items-center gap-3 text-[#F87B1B] -ml-4">
                     <HeartPulse className="w-6.5 h-6" />
                     <h1
-                      className="text-2xl font-extrabold text-white tracking-tight -ml-2"
+                      className="text-base font-extrabold text-white tracking-tight -ml-2"
                       style={{ fontFamily: "'Poppins', sans-serif" }}
                     >
                       DHANOMI
@@ -87,24 +87,40 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
                 </SidebarGroup>
               </SidebarContent>
 
-              <SidebarFooter className="text-black bg-[#F87B1B]/95">
-                <p className="text-center" style={{ fontFamily: "'Times New Roman', Times, serif" }}>
-                  anjnajagatiya@gmail.com
-                </p>
+              <SidebarFooter>
+              <div className="flex items-center bg-white/10 rounded px-1 py-1 cursor-pointer hover:bg-white/20 transition">
+                  <div className="text-xs w-6 h-6 flex items-center justify-center rounded-full bg-white text-[#11224E] font-semibold ml-2">
+                    AJ
+                  </div>
+                  <div className="ml-3 text-white">
+                    <div className="text-sm font-bold">Dr. Anjna Jagatiya</div>
+                    <div className="text-[12px] text-white/70">Healthcare Admin</div>
+                  </div>
+                </div>
               </SidebarFooter>
             </Sidebar>
 
-            {/* ==== Main Content ==== */}
-            <main className="flex-1 p-4">
-              <SidebarTrigger className="hover:bg-[#11224E]/70 hover:text-white" />
+            <div className='flex flex-col w-full'>
+
+            <div className="w-full">
+              <div className="p-4 flex justify-between items-center bg-gradient-to-r from-[#11224E] to-[#7b3e57] shadow-md">
+    
+                <div className="flex items-center gap-3">
+                  <SidebarTrigger className="hover:bg-white/20 text-white rounded-md p-1" />
+                </div>
+              </div>
+            </div>
+            
+            <main className="flex-1 p-0 m-0">
               {children}
             </main>
+
+            </div>
           </SidebarProvider>
         </ResizablePanel>
 
         <ResizableHandle />
 
-        {/* ==== Chat Panel ==== */}
         <ResizablePanel className="w-sm max-w-sm">
           <Chat onChange={(st) => console.log(st)} />
         </ResizablePanel>

@@ -21,17 +21,11 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
 
       if (data.error) {
         setReponse(data.message + "\n" + data.reasoning)
-        // alert("❌ " + data.error + "\n\n🧠 Reasoning: " + (data.reasoning || "No reasoning provided."));
-        return;
+          return;
       }
 
       if (data.message) {
         setReponse(data.message + "\n" + data.reasoning)
-        // Show both message and reasoning if available
-        // alert(
-        //   "💬 " + data.message +
-        //   (data.reasoning ? "\n\n🧠 Reasoning: " + data.reasoning : "")
-        // );
         return;
       }
 
