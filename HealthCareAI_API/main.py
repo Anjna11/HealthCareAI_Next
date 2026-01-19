@@ -60,25 +60,22 @@ def get_patients():
 
 @app.get("/appointments")
 def get_appointments():
-    appointments_cursor = appointments_collection.find()
     appointments_list = []
 
-    for a in appointments_cursor:
+    for a in appointments_collection.find():
         patient_id_str = a.get("patient_id")
         patient = None
 
-        # Check if patient_id is a valid ObjectId
+        # Safely convert patient_id to ObjectId
         try:
             patient_obj_id = ObjectId(patient_id_str)
             patient = patients_collection.find_one({"_id": patient_obj_id})
         except (InvalidId, TypeError):
-            patient = None
+            patient = None  # invalid ID, patient not found
 
-    for a in appointments_cursor:
-        patient = patients_collection.find_one({"_id": ObjectId(a["patient_id"])})
         appointments_list.append({
             "id": str(a["_id"]),
-            "patient_id": a["patient_id"],
+            "patient_id": patient_id_str,
             "patient_name": f"{patient['name']['fname']} {patient['name']['lname']}" if patient else "Unknown",
             "date": a.get("date"),
             "type": a.get("type"),
@@ -87,6 +84,7 @@ def get_appointments():
         })
 
     return {"appointments": appointments_list}
+
 
 
 class Message(BaseModel):
