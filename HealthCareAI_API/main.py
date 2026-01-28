@@ -100,8 +100,42 @@ def get_patient_id_from_number(num):
     
     return patients[index]["_id"]
 
+conversation_state = {}
 @app.post("/message")
 def message(msg: Message):
+
+    session_id = "default" 
+
+    # ---- HANDLE DOCTOR SELECTION FIRST ----
+    if session_id in conversation_state:
+        if msg.text.isdigit():
+            doctor_index = int(msg.text) - 1
+            doctors = list(doctors_collection.find())
+            if doctor_index < 0 or doctor_index >= len(doctors):
+                return {
+                    "message": "Invalid doctor number. Please select a valid number from the list.",
+                    "reasoning": ""
+                }
+
+            doctor = doctors[doctor_index]
+            appointment_data = conversation_state.pop(session_id)
+
+            # Save appointment with selected doctor
+            appointments_collection.insert_one({
+                "patient_id": appointment_data["patient_id"],
+                "doctor_id": str(doctor["_id"]),
+                "date": appointment_data["date"],
+                "type": appointment_data["type"]
+            })
+
+            return {
+                "message": f"✅ Appointment booked with {doctor['name']} on {appointment_data['date']} for {appointment_data['type']}.",
+                "reasoning": "Appointment successfully created."
+            }
+        else:
+            return {"message": "Please enter a valid doctor number from the list."}
+
+
     try:
         patient_info = get_compilation(msg.text)
         print("patient_info=", patient_info)
@@ -197,11 +231,12 @@ def message(msg: Message):
 
         # ---- ADD APPOINTMENT ----
         if action == "add_appointment":
-            
+           
             if not appointment or not appointment.get("date") or not appointment.get("type"):
                 return {"message": "Appointment must include date & type.", "reasoning": reasoning}
 
             pid = patient_info.get("pid")
+            patient_id = None
 
             if pid:
                 try:
@@ -211,10 +246,6 @@ def message(msg: Message):
 
                 if not patient_id:
                     return {"message": "Invalid patient number or ID.", "reasoning": reasoning}
-
-                patient = patients_collection.find_one({"_id": patient_id})
-                if not patient:
-                    return {"message": "Patient not found.", "reasoning": reasoning}
             else:
                 if not fname or age is None:
                     return {
@@ -226,21 +257,52 @@ def message(msg: Message):
                 inserted = patients_collection.insert_one(new_patient)
                 patient_id = inserted.inserted_id
 
-            appointments_collection.insert_one({
+            # Save partial appointment in conversation_state
+            session_id = "default"
+            conversation_state[session_id] = {
                 "patient_id": str(patient_id),
                 "date": appointment["date"],
                 "type": appointment["type"]
-            })
-
-            return {
-                "message": "✅ Appointment added successfully.",
-                "appointment": {
-                    "patient_id": str(patient_id),
-                    "date": appointment["date"],
-                    "type": appointment["type"]
-                },
-                "reasoning": reasoning
             }
+
+            # Return doctor list
+            doctors = list(doctors_collection.find())
+            if not doctors:
+                return {"message": "No doctors found.", "reasoning": "Please try again later."}
+
+            doctor_list_str = "\n".join([f"{i+1}. {doc['name']} ({doc['specialization']})" 
+                                         for i, doc in enumerate(doctors)])
+            return {
+                "message": f"Please choose a doctor by number:\n{doctor_list_str}",
+                "reasoning": "Select a doctor for your appointment."
+            }
+
+        # ---- HANDLE DOCTOR SELECTION ----
+        if msg.text.isdigit():
+            session_id = "default"
+            if session_id in conversation_state:
+                doctor_index = int(msg.text) - 1
+                doctors = list(doctors_collection.find())
+                if doctor_index < 0 or doctor_index >= len(doctors):
+                    return {"message": "Invalid doctor number. Please select a valid number from the list.", 
+                            "reasoning": ""}
+
+                doctor = doctors[doctor_index]
+                appointment_data = conversation_state.pop(session_id)
+
+                # Save appointment with selected doctor
+                appointments_collection.insert_one({
+                    "patient_id": appointment_data["patient_id"],
+                    "doctor_id": str(doctor["_id"]),
+                    "date": appointment_data["date"],
+                    "type": appointment_data["type"]
+                })
+
+                return {
+                    "message": f"✅ Appointment booked with {doctor['name']} on {appointment_data['date']} for {appointment_data['type']}.",
+                    "reasoning": "Appointment successfully created."
+                }
+
 
         # Default fallback
         return {"message": f"Unrecognized action: {action}", "reasoning": reasoning}

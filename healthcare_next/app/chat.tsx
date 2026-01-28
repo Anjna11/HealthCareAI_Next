@@ -3,9 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { useState } from "react";
 
+type ConversationState = "idle" | "awaiting_doctor";
+
 export default function Chat({ onChange }: { onChange: (val: string) => void }) {
   const [text, setText] = useState("");
-  const [reponse, setReponse] = useState("")
+  const [response, setResponse] = useState("");
+  const [state, setState] = useState<ConversationState>("idle"); // conversation state
 
   const handleSend = async () => {
     if (!text.trim()) return;
@@ -19,17 +22,17 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
 
       const data = await res.json();
 
-      if (data.error) {
-        setReponse(data.message + "\n" + data.reasoning)
-          return;
+      // Check if backend returned doctor selection prompt
+      if (data.message && data.message.includes("Please choose a doctor")) {
+        setState("awaiting_doctor"); // waiting for doctor selection
+      } else if (state === "awaiting_doctor") {
+        // After selecting doctor, reset state
+        setState("idle");
       }
 
-      if (data.message) {
-        setReponse(data.message + "\n" + data.reasoning)
-        return;
-      }
+      // Update response
+      setResponse(data.message + (data.reasoning ? "\n" + data.reasoning : ""));
 
-      alert("✅ Success\n\n🧠 Reasoning: " + (data.reasoning || "No reasoning provided."));
     } catch (err) {
       alert("⚠️ Server not responding");
     }
@@ -39,31 +42,36 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
   };
 
   return (
-    <div className="flex flex-col gap-5 p-5 bg-gray-50 rounded-lg shadow-md max-w-md mx-auto"
-          style={{ fontFamily: "'Times New Roman', Times, serif" }}>
-
+    <div
+      className="flex flex-col gap-5 p-5 bg-gray-50 rounded-lg shadow-md max-w-md mx-auto"
+      style={{ fontFamily: "'Times New Roman', Times, serif" }}
+    >
       <h3 className="text-lg font-semibold text-[#11224E] tracking-wide">
         How can I help you?
       </h3>
 
-    <div className="-my-1">
-      <hr className="border-[#F87B1B]/30" />
-    </div>
+      <div className="-my-1">
+        <hr className="border-[#F87B1B]/30" />
+      </div>
 
-    {reponse && (
-    <p
-      className="text-gray-800 text-justify leading-relaxed"
-      style={{ textAlign: 'justify', hyphens: 'auto' }}>
-      {reponse}
-    </p>
-    )}
+      {response && (
+        <p
+          className="text-gray-800 text-justify leading-relaxed whitespace-pre-wrap"
+          style={{ textAlign: "justify", hyphens: "auto" }}
+        >
+          {response}
+        </p>
+      )}
 
       <textarea
         value={text}
         onChange={(e) => setText(e.target.value)}
-        placeholder="Type something..."
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none 
-        focus:ring-2 font-body text-gray-700 text-lg resize-none h-32 placeholder:text-sm placeholder:text-gray-400"
+        placeholder={
+          state === "awaiting_doctor"
+            ? "Enter doctor number from the list..."
+            : "Type something..."
+        }
+        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 font-body text-gray-700 text-lg resize-none h-32 placeholder:text-sm placeholder:text-gray-400"
       />
 
       <Button

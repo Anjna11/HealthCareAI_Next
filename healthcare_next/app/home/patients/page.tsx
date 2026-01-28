@@ -64,15 +64,6 @@ export default function Patients() {
                 {patients.map((p, index) => (
                   <TableRow
                     key={p.id}
-
-                    onClick={() => {
-                      const patientName = `${p.fname} ${p.lname}`;
-                  
-                      router.push(
-                        `/home/appointments/profile?id=${p.id}&patient_name=${encodeURIComponent(patientName)}
-                        &age=${p.age}&gender=${p.gender}`
-                      );
-                    }}
                     className="hover:bg-[#11224E]/5 transition border-b border-gray-100"
                   >
                     <TableCell className="font-semibold text-center px-4">
