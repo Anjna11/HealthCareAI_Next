@@ -46,17 +46,23 @@ export default function Appointments() {
 
             <TableHeader>
               <TableRow className="bg-[#11224E] rounded-lg hover:bg-[#11224E] transition-colors">
-                <TableHead className="text-white py-3 px-4 text-center w-[70px] rounded-l-lg">
+                <TableHead className="text-white py-3 px-4 text-center w-[60px] rounded-l-lg">
                   No.
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[35%]">
+                <TableHead className="text-white px-4 text-left w-[180px]">
                   Patient
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[200px]">
+                <TableHead className="text-white px-4 text-left w-[140px]">
                   Date
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[200px] rounded-r-lg">
+                <TableHead className="text-white px-4 text-left w-[155px]">
                   Type
+                </TableHead>
+                <TableHead className="text-white px-4 text-left w-[175px]">
+                  Doctor
+                </TableHead>
+                <TableHead className="text-white px-4 text-left w-[180px] rounded-r-lg">
+                  Doctor specialization
                 </TableHead>
               </TableRow>
             </TableHeader>
@@ -80,6 +86,12 @@ export default function Appointments() {
                   </TableCell>
                   <TableCell className="text-left px-4 w-[200px]">
                     {a.type}
+                  </TableCell>
+                  <TableCell className="text-left px-4 w-[200px]">
+                    {a.doctor_name}
+                  </TableCell>
+                  <TableCell className="text-left px-4 w-[200px]">
+                    {a.doctor_specialization}
                   </TableCell>
                 </TableRow>
               ))}

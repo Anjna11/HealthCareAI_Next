@@ -63,15 +63,24 @@ def get_appointments():
     appointments_list = []
 
     for a in appointments_collection.find():
+        
         patient_id_str = a.get("patient_id")
         patient = None
 
-        # Safely convert patient_id to ObjectId
         try:
             patient_obj_id = ObjectId(patient_id_str)
             patient = patients_collection.find_one({"_id": patient_obj_id})
         except (InvalidId, TypeError):
-            patient = None  # invalid ID, patient not found
+            patient = None 
+
+        doctor_id_str = a.get("doctor_id")
+        doctor = None
+
+        try:
+            doctor_obj_id = ObjectId(doctor_id_str)
+            doctor = doctors_collection.find_one({"_id": doctor_obj_id})
+        except (InvalidId, TypeError):
+            doctor = None
 
         appointments_list.append({
             "id": str(a["_id"]),
@@ -80,7 +89,9 @@ def get_appointments():
             "date": a.get("date"),
             "type": a.get("type"),
             "age": patient.get("age") if patient else None,
-            "gender": patient.get("gender") if patient else None
+            "gender": patient.get("gender") if patient else None,
+            "doctor_name": doctor["name"] if doctor else "Unknown",
+            "doctor_specialization": doctor["specialization"] if doctor else "Unknown"
         })
 
     return {"appointments": appointments_list}
