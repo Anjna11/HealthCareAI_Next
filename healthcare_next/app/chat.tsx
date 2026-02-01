@@ -1,14 +1,23 @@
 'use client';
 
 import { Button } from "@/components/ui/button";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type ConversationState = "idle" | "awaiting_doctor";
 
 export default function Chat({ onChange }: { onChange: (val: string) => void }) {
   const [text, setText] = useState("");
   const [response, setResponse] = useState("");
-  const [state, setState] = useState<ConversationState>("idle"); // conversation state
+  const [state, setState] = useState<ConversationState>("idle");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-grow textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto"; // reset
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`; // fit content
+    }
+  }, [text]);
 
   const handleSend = async () => {
     if (!text.trim()) return;
@@ -22,17 +31,13 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
 
       const data = await res.json();
 
-      // Check if backend returned doctor selection prompt
       if (data.message && data.message.includes("Please choose a doctor")) {
-        setState("awaiting_doctor"); // waiting for doctor selection
+        setState("awaiting_doctor");
       } else if (state === "awaiting_doctor") {
-        // After selecting doctor, reset state
         setState("idle");
       }
 
-      // Update response
       setResponse(data.message + (data.reasoning ? "\n" + data.reasoning : ""));
-
     } catch (err) {
       alert("⚠️ Server not responding");
     }
@@ -41,9 +46,17 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
     onChange("Demo");
   };
 
+  // Press Enter to send, Shift+Enter for newline
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
   return (
     <div
-      className="flex flex-col gap-5 p-5 bg-gray-50 rounded-lg shadow-md max-w-md mx-auto"
+      className="flex flex-col gap-2 p-2 pl-50 bg-gray-50 rounded-lg shadow-md max-w-5xl mx-auto"
       style={{ fontFamily: "'Times New Roman', Times, serif" }}
     >
       <h3 className="text-lg font-semibold text-[#11224E] tracking-wide">
@@ -63,23 +76,40 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
         </p>
       )}
 
-      <textarea
-        value={text}
-        onChange={(e) => setText(e.target.value)}
-        placeholder={
-          state === "awaiting_doctor"
-            ? "Enter doctor number from the list..."
-            : "Type something..."
-        }
-        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 font-body text-gray-700 text-lg resize-none h-32 placeholder:text-sm placeholder:text-gray-400"
-      />
+      {/* ChatGPT-style input with arrow button */}
+      <div className="flex items-end w-full border border-gray-200 rounded-2xl focus-within:ring-1 focus-within:ring-[#F87B1B]/80 p-2 bg-white">
+        <textarea
+          ref={textareaRef}
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder={
+            state === "awaiting_doctor"
+              ? "Enter doctor number from the list..."
+              : "Type something..."
+          }
+          className="flex-1 resize-none overflow-hidden px-4 py-2 text-gray-700 text-lg placeholder:text-gray-400 rounded-2xl focus:outline-none font-body"
+        />
 
-      <Button
-        onClick={handleSend}
-        className="w-full py-2 rounded-md bg-green-500 text-white font-body font-medium primary-button"
-      >
-        Send
-      </Button>
+        <button
+          onClick={handleSend}
+          className="ml-2 bg-[#F87B1B] hover:bg-[#e67618] text-white p-2 rounded-full flex-shrink-0 transition-all duration-200 ease-in-out"
+        >
+          {/* Up arrow icon */}
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            className="h-4 w-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
+          </svg>
+        </button>
+
+      </div>
+
     </div>
   );
 }

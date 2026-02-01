@@ -36,7 +36,7 @@ export default function Patients() {
         </h1>
 
         <div className="overflow-x-auto">
-          <div className="max-h-[65vh] overflow-y-auto relative border border-gray-100 rounded-lg">
+        <div className="border border-gray-100 rounded-lg">
             <Table className="w-full min-w-[600px] border-collapse">
               <TableCaption className="text-sm text-gray-500 mt-3">
                 Example commands: <strong>“delete patient 2”</strong>,{" "}
