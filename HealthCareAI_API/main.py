@@ -5,6 +5,7 @@ from pymongo import MongoClient
 import json
 from ai import get_compilation
 from bson.objectid import ObjectId, InvalidId
+from fastapi import HTTPException
 
 app = FastAPI()
 
@@ -320,3 +321,39 @@ def message(msg: Message):
 
     except Exception as e:
         return {"error": str(e), "reasoning": "Error occurred during processing."}
+
+
+
+@app.get("/get_allAppointments/{appointment_id}")
+def get_allAppointments(appointment_id: str):
+    try:
+        app_obj_id = ObjectId(appointment_id)
+    except InvalidId:
+        raise HTTPException(status_code=400, detail="Invalid appointment ID")
+
+    # Step 1: find the appointment to get the patient_id
+    appointment = appointments_collection.find_one({"_id": app_obj_id})
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    patient_id = appointment.get("patient_id")
+    if not patient_id:
+        raise HTTPException(status_code=404, detail="Patient ID not found in appointment")
+
+    # Step 2: fetch all appointments for that patient
+    allAppointments_list = []
+    for a in appointments_collection.find({"patient_id": patient_id}):
+        allAppointments_list.append({
+            "date": a.get("date"),
+            "startTime": a.get("startTime"),
+            "endTime": a.get("endTime"),
+            "notes": a.get("notes"),
+            "medication": a.get("medication"),
+            "reports": a.get("reports")
+        })
+
+    return {"allAppointments_list": allAppointments_list}
+
+
+
+
