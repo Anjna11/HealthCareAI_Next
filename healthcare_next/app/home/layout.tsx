@@ -112,10 +112,10 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
         </SidebarProvider>
       </div>
 
-      {/* Chat at the bottom */}
+      {/* Chat at the bottom
       <div className="fixed bottom-0 left-64 right-0 z-50 border-t">
         <Chat onChange={(st) => console.log(st)} />
-      </div>
+      </div> */}
     </div>
   );
 }
