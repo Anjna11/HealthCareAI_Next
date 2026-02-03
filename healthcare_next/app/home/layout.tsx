@@ -32,28 +32,24 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       <div className="flex flex-1 overflow-hidden">
         <SidebarProvider>
           <Sidebar id="left" className="flex-shrink-0">
-            <SidebarHeader
-              className="text-gray-300"
-              style={{ background: '#11224E' }}
-            >
-              <div className="flex flex-col items-center justify-center">
-                <div className="flex items-center gap-3 text-[#F87B1B] -ml-4">
+            <SidebarHeader>
+              <div className="flex flex-col items-center justify-center text-[var(--sidebar-text-main)]">
+                <div className="flex items-center gap-3">
                   <HeartPulse className="w-6.5 h-6" />
                   <h1
-                    className="text-base font-extrabold text-white tracking-tight -ml-2"
+                    className="text-base font-extrabold tracking-tight "
                     style={{ fontFamily: "'Poppins', sans-serif" }}
                   >
                     DHANOMI
                   </h1>
                 </div>
                 <p
-                  className="text-sm text-gray-300 -mr-2"
+                  className="text-sm"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   HealthCare.AI
                 </p>
               </div>
-              <hr className="border-[#F87B1B]/30" />
             </SidebarHeader>
 
             <SidebarContent className="mt-3">
@@ -85,13 +81,13 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
             </SidebarContent>
 
             <SidebarFooter>
-              <div className="flex items-center bg-white/10 rounded px-1 py-1 cursor-pointer hover:bg-white/20 transition">
-                <div className="text-xs w-6 h-6 flex items-center justify-center rounded-full bg-white text-[#11224E] font-semibold ml-2">
+              <div className="flex items-center bg-[var(--sidebar-bottom-back)] rounded px-1 py-1 cursor-pointer hover:bg-white/20 transition">
+                <div className="text-xs w-6 h-6 flex items-center justify-center rounded-full bg-[var(--sidebar-bottom-icon-back)] text-[var(--sidebar-bottom-icon-fore)] font-semibold ml-2">
                   AJ
                 </div>
-                <div className="ml-3 text-white">
+                <div className="ml-3">
                   <div className="text-sm font-bold">Dr. Anjna Jagatiya</div>
-                  <div className="text-[12px] text-white/70">Healthcare Admin</div>
+                  <div className="text-[12px]">Healthcare Admin</div>
                 </div>
               </div>
             </SidebarFooter>
@@ -101,9 +97,9 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
           <div className="flex-1 flex flex-col overflow-hidden">
             {/* Header */}
             <div className="w-full">
-              <div className="p-4 flex justify-between items-center bg-gradient-to-r from-[#11224E] to-[#7b3e57] shadow-md">
+              <div className="p-4 flex justify-between items-center shadow-md">
                 <div className="flex items-center gap-3">
-                  <SidebarTrigger className="hover:bg-white/20 text-white rounded-md p-1" />
+                  <SidebarTrigger className="rounded-md p-1" />
                 </div>
               </div>
             </div>
@@ -117,7 +113,7 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
       </div>
 
       {/* Chat at the bottom */}
-      <div className="fixed bottom-0 left-64 right-0 z-50 bg-gray-50 border-t">
+      <div className="fixed bottom-0 left-64 right-0 z-50 border-t">
         <Chat onChange={(st) => console.log(st)} />
       </div>
     </div>
