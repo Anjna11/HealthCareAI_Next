@@ -31,9 +31,6 @@ export default function Appointments() {
   return (
     <div className="p-8 max-w-6xl mx-auto">
       <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-        <h1 className="text-3xl font-semibold mb-6 text-[#11224E] tracking-wide">
-          Appointment Schedule
-        </h1>
 
         <div className="overflow-x-auto">
           <Table className="w-full table-fixed border-collapse">

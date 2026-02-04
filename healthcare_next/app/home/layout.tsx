@@ -24,8 +24,14 @@ import {
 } from '@/components/ui/sidebar';
 import { Calendar, Inbox } from 'lucide-react';
 import Chat from '../chat';
+import { usePathname } from 'next/navigation';
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
+
+  const pathname = usePathname();
+  const pageTitle = pathname === '/home/patients' ? 'Patient Records' : pathname === '/home/appointments' ? 'Appointments' : ''; // Add more cases as needed
+
+  
   return (
     <div className="flex flex-col h-screen">
       {/* Main horizontal layout: Sidebar + Main content */}
@@ -95,11 +101,20 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
 
           {/* Main content area */}
           <div className="flex-1 flex flex-col overflow-hidden">
-            {/* Header */}
+            {/* Header - Merged SidebarTrigger and Page Title */}
             <div className="w-full">
               <div className="p-4 flex justify-between items-center shadow-md">
                 <div className="flex items-center gap-3">
                   <SidebarTrigger className="rounded-md p-1" />
+                  {/* Conditionally render the page title if provided */}
+                  {pageTitle && (
+                    <h2
+                      className="text-lg font-semibold"
+                      style={{ fontFamily: "'Poppins', sans-serif" }}
+                    >
+                      {pageTitle}
+                    </h2>
+                  )}
                 </div>
               </div>
             </div>

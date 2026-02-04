@@ -31,10 +31,6 @@ export default function Patients() {
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
       <div className="shadow-sm p-6">
-        <h1 className="text-xl font-semibold mb-6 tracking-wide">
-          Patient Records
-        </h1>
-
         <div className="overflow-x-auto">
           <Table className="w-full min-w-[600px] border-collapse">
             <TableCaption className="text-sm text-gray-500 mt-3">
