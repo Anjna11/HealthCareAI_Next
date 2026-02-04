@@ -30,23 +30,18 @@ export default function Patients() {
 
   return (
     <div style={{ fontFamily: "'Poppins', sans-serif" }}>
-      <div className="shadow-sm p-6">
+      <div className="shadow-sm p-2.5">
         <div className="overflow-x-auto">
           <Table className="w-full min-w-[600px] border-collapse">
-            <TableCaption className="text-sm text-gray-500 mt-3">
-              Example commands: <strong>“delete patient 2”</strong>,{" "}
-              <strong>“update patient 4 age 29”</strong>
-            </TableCaption>
-
             <TableHeader className="bg-[var(--data-table-header-back)] text-[var(--data-table-header-fore)]">
               <TableRow>
-                <TableHead className="py-3 px-4 text-center w-[10%]">
+                <TableHead className="py-3 px-4 text-center w-[8%]">
                   No.
                 </TableHead>
-                <TableHead className="px-18 text-left w-[50%]">
+                <TableHead className="px-18 text-left w-[57%]">
                   Name
                 </TableHead>
-                <TableHead className="px-18 text-center w-[20%]">
+                <TableHead className="px-18 text-center w-[15%]">
                   Age
                 </TableHead>
                 <TableHead className="px-18 text-center w-[20%]">

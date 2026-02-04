@@ -29,36 +29,29 @@ export default function Appointments() {
   }, []);
 
   return (
-    <div className="p-8 max-w-6xl mx-auto">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-
+    <div style={{ fontFamily: "'Poppins', sans-serif" }}>
+      <div className="shadow-sm p-2.5">
         <div className="overflow-x-auto">
-          <Table className="w-full table-fixed border-collapse">
-            <TableCaption className="text-sm text-gray-500 mt-3">
-              Example:{" "}
-              <strong>
-                “add appointment for patient 4 on 2025-03-15 type checkup”
-              </strong>
-            </TableCaption>
+          <Table className="w-full min-w-[600px] border-collapse">
 
-            <TableHeader>
-              <TableRow className="bg-[#11224E] rounded-lg hover:bg-[#11224E] transition-colors">
-                <TableHead className="text-white py-3 px-4 text-center w-[60px] rounded-l-lg">
+            <TableHeader className="bg-[var(--data-table-header-back)] text-[var(--data-table-header-fore)]">
+              <TableRow>
+                <TableHead className="py-3 px-4 text-center w-[50px]">
                   No.
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[180px]">
+                <TableHead className="px-4 text-left w-[180px]">
                   Patient
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[140px]">
+                <TableHead className="px-4 text-left w-[120px]">
                   Date
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[155px]">
+                <TableHead className="px-4 text-left w-[140px]">
                   Type
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[175px]">
+                <TableHead className="px-4 text-left w-[180px]">
                   Doctor
                 </TableHead>
-                <TableHead className="text-white px-4 text-left w-[180px] rounded-r-lg">
+                <TableHead className="px-4 text-left w-[220px]">
                   Doctor specialization
                 </TableHead>
               </TableRow>
@@ -70,12 +63,12 @@ export default function Appointments() {
                   key={a.id}
                   onClick={() => router.push(`/home/appointments/profile?id=${a.id}&patient_name=${a.patient_name}
                     &date=${a.date}&age=${a.age}&gender=${a.gender}`)}
-                  className="hover:bg-[#11224E]/5 transition border-b border-gray-100"
+                  className="bg-[var(--data-table-row-back)] text-[var(--data-table-row-fore)]"
                 >
                   <TableCell className="font-semibold text-left px-6 w-[70px]">
                     {index + 1}
                   </TableCell>
-                  <TableCell className="font-medium text-left px-4 w-[35%] truncate">
+                  <TableCell className="font-medium text-left px-4 w-[35%]">
                     {a.patient_name}
                   </TableCell>
                   <TableCell className="text-left px-4 w-[200px]">
