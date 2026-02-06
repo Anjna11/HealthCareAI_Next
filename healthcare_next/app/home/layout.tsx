@@ -27,30 +27,28 @@ import Chat from '../chat';
 import { usePathname } from 'next/navigation';
 
 export default function HomeLayout({ children }: { children: React.ReactNode }) {
-
   const pathname = usePathname();
   const pageTitle = pathname === '/home/patients' ? 'Patient Records' : pathname === '/home/appointments' ? 'Appointments' : ''; // Add more cases as needed
 
-  
   return (
     <div className="flex flex-col h-screen">
       {/* Main horizontal layout: Sidebar + Main content */}
       <div className="flex flex-1 overflow-hidden">
         <SidebarProvider>
           <Sidebar id="left" className="flex-shrink-0">
-            <SidebarHeader>
-              <div className="flex flex-col items-center justify-center text-[var(--sidebar-text-main)]">
+            <SidebarHeader className="py-4">
+              <div className="flex flex-col items-center justify-center text-[var(--sidebar-text-main)] ">
                 <div className="flex items-center gap-3">
-                  <HeartPulse className="w-6.5 h-6" />
+                  {/* <HeartPulse className="w-6 h-6 text-[#F87B1B]"/> */}  
                   <h1
-                    className="text-base font-extrabold tracking-tight "
+                    className="text-base font-extrabold tracking-tight text-[#F87B1B]/80"
                     style={{ fontFamily: "'Poppins', sans-serif" }}
                   >
                     DHANOMI
                   </h1>
                 </div>
                 <p
-                  className="text-sm"
+                  className="text-sm opacity-80"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   HealthCare.AI
@@ -119,18 +117,26 @@ export default function HomeLayout({ children }: { children: React.ReactNode }) 
               </div>
             </div>
 
-            {/* Page content */}
-            <main className="flex-1 overflow-auto pb-40">
-              {children}
-            </main>
+            <div className="flex-1 overflow-hidden">
+              <ResizablePanelGroup direction="horizontal">
+                <ResizablePanel defaultSize={50} minSize={50}>
+                  <main className="h-full overflow-auto">
+                    {children}
+                  </main>
+                </ResizablePanel>
+
+                <ResizableHandle />
+
+                <ResizablePanel defaultSize={30} minSize={20}>
+                  <div className="h-full overflow-auto">
+                    <Chat onChange={(st) => console.log(st)} />
+                  </div>
+                </ResizablePanel>
+              </ResizablePanelGroup>
+            </div>
           </div>
         </SidebarProvider>
       </div>
-
-      {/* Chat at the bottom
-      <div className="fixed bottom-0 left-64 right-0 z-50 border-t">
-        <Chat onChange={(st) => console.log(st)} />
-      </div> */}
     </div>
   );
 }

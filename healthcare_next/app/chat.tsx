@@ -2,16 +2,19 @@
 
 import { Button } from "@/components/ui/button";
 import { useState, useRef, useEffect } from "react";
+import { HeartPulse, User } from 'lucide-react'; 
 
 type ConversationState = "idle" | "awaiting_doctor";
+type Message = { role: 'user' | 'assistant'; content: string };
 
 export default function Chat({ onChange }: { onChange: (val: string) => void }) {
   const [text, setText] = useState("");
-  const [response, setResponse] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
   const [state, setState] = useState<ConversationState>("idle");
+  const [hasStarted, setHasStarted] = useState(false); // Track if chat has started
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesEndRef = useRef<HTMLDivElement>(null); // For auto-scroll
 
-  // Auto-grow textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto"; // reset
@@ -19,8 +22,20 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
     }
   }, [text]);
 
+  // Auto-scroll to bottom on new message
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   const handleSend = async () => {
     if (!text.trim()) return;
+
+    // Start the chat on first send (after user writes and sends)
+    if (!hasStarted) setHasStarted(true);
+
+    // Add user message
+    const userMessage: Message = { role: 'user', content: text };
+    setMessages((prev) => [...prev, userMessage]);
 
     try {
       const res = await fetch("http://127.0.0.1:8000/message", {
@@ -37,13 +52,25 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
         setState("idle");
       }
 
-      setResponse(data.message + (data.reasoning ? "\n" + data.reasoning : ""));
+      // Add assistant response
+      const assistantMessage: Message = {
+        role: 'assistant',
+        content: data.message + (data.reasoning ? "\n" + data.reasoning : "")
+      };
+      setMessages((prev) => [...prev, assistantMessage]);
     } catch (err) {
-      alert("⚠️ Server not responding");
+      // Add error message
+      const errorMessage: Message = { role: 'assistant', content: "⚠️ Server not responding" };
+      setMessages((prev) => [...prev, errorMessage]);
     }
 
     setText("");
     onChange("Demo");
+  };
+
+  // Handle input change - no longer starts chat here
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setText(e.target.value);
   };
 
   // Press Enter to send, Shift+Enter for newline
@@ -55,47 +82,98 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
   };
 
   return (
-    <div
-      className="flex flex-col gap-2 p-2 pl-50 bg-gray-50 rounded-lg shadow-md max-w-5xl mx-auto"
-      style={{ fontFamily: "'Times New Roman', Times, serif" }}
-    >
-      <h3 className="text-lg font-semibold text-[#11224E] tracking-wide">
-        How can I help you?
-      </h3>
-
-      <div className="-my-1">
-        <hr className="border-[#F87B1B]/30" />
-      </div>
-
-      {response && (
-        <p
-          className="text-gray-800 text-justify leading-relaxed whitespace-pre-wrap"
-          style={{ textAlign: "justify", hyphens: "auto" }}
-        >
-          {response}
-        </p>
+    <div className="flex flex-col p-2.5 h-full">
+      {/* Header - Show only when chat has started */}
+      {hasStarted && (
+        <div className="flex items-center justify-between p-3 border-b">
+          <div className="flex items-center gap-3">
+            <HeartPulse className="w-6 h-6 text-[#F87B1B]/80" />
+            <div>
+              <h3
+                className="text-base font-extrabold tracking-tight"
+                style={{ fontFamily: "'Poppins', sans-serif" }}
+              >
+                HealthCareAI Chat
+              </h3>
+            </div>
+          </div>
+          <div className="text-xs text-muted-foreground">Assistant</div>
+        </div>
       )}
 
-      {/* ChatGPT-style input with arrow button */}
-      <div className="flex items-end w-full border border-gray-200 rounded-2xl focus-within:ring-1 focus-within:ring-[#F87B1B]/80 p-2 bg-white">
+      <div className="flex-1 overflow-y-auto p-4">
+        {messages.length === 0 && !hasStarted ? (
+          
+          <div className="flex flex-col items-center justify-center h-full text-center space-y-4">
+            <HeartPulse className="w-10 h-10 text-[#F87B1B]" /> 
+            <h2
+              className="text-2xl font-extrabold text-foreground"
+              style={{ fontFamily: "'Poppins', sans-serif" }}
+            >
+              DHANOMI
+            </h2>
+            <p
+              className="text-lg text-muted-foreground"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              HealthCare.AI Chat
+            </p>
+            <p className="text-sm text-muted-foreground max-w-md">
+              Your AI assistant for healthcare management. Ask me to add patients, book appointments, or get insights!
+            </p>
+          </div>
+        ) : (
+          
+          <div className="max-w-2xl mx-auto space-y-4">
+            {messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                <div
+                  className={`max-w-xs lg:max-w-md px-3 py-2 rounded-md text-sm shadow-sm ${
+                    msg.role === 'user'
+                      ? 'bg-card text-foreground  pl-3'
+                      : 'bg-card text-card-foreground pl-3'
+                  }`}
+                >
+
+                <div className="flex items-start gap-2">
+                  {/* <div className={`w-5 h-5 rounded-md flex items-center justify-center text-xs ${
+                    msg.role === 'user' ? 'bg-[#F87B1B] text-white' : 'bg-[#F87B1B] text-white'
+                  }`}>
+                    {msg.role === 'user' ? <User className="w-3 h-3" /> : <HeartPulse className="w-4.6 h-3" />}
+                  </div> */}
+                  <div className="whitespace-pre-wrap">{msg.content}</div>
+                </div>
+               </div>
+            </div>
+          ))}
+          <div ref={messagesEndRef} /> {/* Auto-scroll anchor */}
+        </div>
+      )}
+    </div>
+
+      <div className="flex w-full border rounded-xl focus-within:ring-1 focus-within:ring-ring p-2">
         <textarea
           ref={textareaRef}
           value={text}
-          onChange={(e) => setText(e.target.value)}
+          onChange={handleInputChange} 
           onKeyDown={handleKeyDown}
           placeholder={
             state === "awaiting_doctor"
               ? "Enter doctor number from the list..."
-              : "Type something..."
+              : "Ask DHANOMI..."
           }
-          className="flex-1 resize-none overflow-hidden px-4 py-2 text-gray-700 text-lg placeholder:text-gray-400 rounded-2xl focus:outline-none font-body"
+          className="flex-1 resize-none px-1 py-1 text-foreground text-sm placeholder:text-muted-foreground focus:outline-none"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+          rows={1}
         />
-
         <button
           onClick={handleSend}
-          className="ml-2 bg-[#F87B1B] hover:bg-[#e67618] text-white p-2 rounded-full flex-shrink-0 transition-all duration-200 ease-in-out"
+          disabled={!text.trim()}
+          className="ml-2 text-white p-1.5 rounded transition-all duration-200"
         >
-          {/* Up arrow icon */}
           <svg
             xmlns="http://www.w3.org/2000/svg"
             className="h-4 w-4"
@@ -107,9 +185,7 @@ export default function Chat({ onChange }: { onChange: (val: string) => void }) 
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
           </svg>
         </button>
-
       </div>
-
     </div>
   );
 }

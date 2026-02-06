@@ -141,7 +141,7 @@ def message(msg: Message):
             })
 
             return {
-                "message": f"✅ Appointment booked with {doctor['name']} on {appointment_data['date']} for {appointment_data['type']}.",
+                "message": f"Appointment booked with {doctor['name']} on {appointment_data['date']} for {appointment_data['type']}.",
                 "reasoning": "Appointment successfully created."
             }
         else:
@@ -175,7 +175,7 @@ def message(msg: Message):
 
             if age is None or age == "" or not isinstance(age, int):
                 return {
-                    "message": "❗ Age is required to add a patient. Please specify age.",
+                    "message": "Age is required to add a patient. Please specify age.",
                     "reasoning": reasoning
                 }
 
@@ -187,7 +187,7 @@ def message(msg: Message):
             patients_collection.insert_one(new_patient)
 
             return {
-                "message": "✅ Patient added successfully.",
+                "message": "Patient added successfully.",
                 "patient": {"fname": fname, "lname": lname, "age": age, "gender": gender},
                 "reasoning": reasoning
             }
@@ -222,7 +222,7 @@ def message(msg: Message):
             if result.modified_count == 0:
                 return {"message": "No changes made. Patient may not exist.", "reasoning": reasoning}
 
-            return {"message": "✅ Patient updated successfully.", "reasoning": reasoning}
+            return {"message": "Patient updated successfully.", "reasoning": reasoning}
 
         # ---- DELETE PATIENT ----
         if action == "delete_patient":
@@ -311,7 +311,7 @@ def message(msg: Message):
                 })
 
                 return {
-                    "message": f"✅ Appointment booked with {doctor['name']} on {appointment_data['date']} for {appointment_data['type']}.",
+                    "message": f"Appointment booked with {doctor['name']} on {appointment_data['date']} for {appointment_data['type']}.",
                     "reasoning": "Appointment successfully created."
                 }
 
