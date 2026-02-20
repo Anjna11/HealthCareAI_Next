@@ -25,227 +25,182 @@ export default function Login() {
       const data = await res.json();
 
       if (data.success) {
-        setMessage('✅ Login successful!');
+        setMessage('Login successful!');
         setTimeout(() => {
           router.push('/home');
         }, 800);
       } else {
-        setMessage('❌ Invalid email or password');
+        setMessage('Invalid email or password');
       }
     } catch (error) {
       console.error(error);
-      setMessage('⚠️ Error connecting to server');
+      setMessage('Error connecting to server');
     }
   };
 
-  // ✨ Animation variants
-  const container = {
-    hidden: { opacity: 0, x: -60 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: {
-        duration: 0.8,
-        ease: [0.25, 0.1, 0.25, 1],
-        when: 'beforeChildren',
-        staggerChildren: 0.15,
-      },
-    },
-  };
-
-  const item = {
-    hidden: { opacity: 0, x: -30 },
-    visible: {
-      opacity: 1,
-      x: 0,
-      transition: { duration: 0.6, ease: 'easeOut' },
-    },
-  };
-
   return (
-    <div className="flex min-h-screen">
-      {/* Right side (Form Section) */}
-      <div className="flex flex-col justify-center items-center w-full md:w-1/2 bg-[#FAFAFA] px-10 py-16">
+    <div className="flex h-screen bg-[#0a0a0a] text-white relative overflow-hidden">
+
+      {/* Subtle Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:40px_40px]" />
+
+      {/* LEFT SIDE */}
+      <div className="hidden md:flex w-1/2 items-center justify-center p-16 relative z-10">
+        <div className="max-w-lg">
+          <motion.h2
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="text-4xl font-bold leading-tight"
+          >
+            Healing the Future with Intelligence
+          </motion.h2>
+
+          <motion.p
+            initial={{ opacity: 0, x: -40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="text-white/70 text-lg leading-relaxed space-y-4"
+          >
+            At <span className="text-white font-semibold">Dhanomi HealthCare.AI</span>, 
+            innovation meets empathy.
+            <br /><br />
+            We blend advanced artificial intelligence with human insight to empower 
+            doctors, enhance patient outcomes, and redefine personalized care.
+            <br /><br />
+            Smarter diagnostics. Seamless connections.
+            <br />
+            Compassion, reimagined through technology.
+          </motion.p>
+        </div>
+      </div>
+
+      {/* RIGHT SIDE */}
+      <div className="flex flex-col justify-center items-center w-full md:w-1/2 px-10 py-16 relative z-10">
+
+        {/* Logo */}
         <motion.div
-          className="flex items-center gap-2 mb-8 text-[#0E1A36]"
-          variants={item}
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="flex items-center gap-3 mb-10"
         >
           <HeartPulse className="w-7 h-7 text-[#F87B1B]" />
-          <h1
-            className="text-3xl font-extrabold tracking-tight"
-            style={{ fontFamily: "'Poppins', sans-serif" }}
-          >
+          <h1 className="text-3xl font-bold tracking-wide">
             DHANOMI
           </h1>
         </motion.div>
 
+        {/* Card */}
         <motion.div
-          className="w-full max-w-md"
-          variants={container}
-          initial="hidden"
-          animate="visible"
+          initial={{ opacity: 0, y: 40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="w-full max-w-md bg-[#111111] border border-white/10 backdrop-blur-lg rounded-2xl p-8 shadow-2xl"
         >
-          {/* Heading */}
-          <motion.div variants={item}>
-            <h2
-              className="text-3xl font-semibold text-[#0E1A36]"
-              style={{ fontFamily: "'Poppins', sans-serif" }}
-            >
-              Welcome Back
-            </h2>
-            <p className="text-gray-500 text-sm mb-8">
-              Please enter your login details to continue.
-            </p>
-          </motion.div>
+          <h2 className="text-2xl font-semibold mb-2">Welcome Back</h2>
+          <p className="text-white/60 text-sm mb-8">
+            Please enter your login details to continue.
+          </p>
 
-          {/* Form */}
-          <motion.form className="space-y-5" onSubmit={handleSubmit} variants={item}>
+          <form onSubmit={handleSubmit} className="space-y-6">
+
+            {/* Email */}
             <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm text-white/70 mb-2">
                 Email
               </label>
               <input
                 type="email"
-                id="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSubmit(e);
-                }}
-                className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F87B1B] text-gray-900"
-                placeholder="you@example.com"
                 required
+                placeholder="you@example.com"
+                className="w-full px-4 py-3 
+                bg-[#0d0d0d] 
+                border border-white/10 
+                rounded-lg 
+                text-white 
+                placeholder-white/30
+                focus:outline-none 
+                focus:border-white 
+                focus:ring-1 
+                focus:ring-white/40
+                transition-all duration-300"
               />
             </div>
 
+            {/* Password */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-medium text-gray-700"
-              >
+              <label className="block text-sm text-white/70 mb-2">
                 Password
               </label>
               <input
                 type="password"
-                id="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter') handleSubmit(e);
-                }}
-                className="w-full px-3 py-2 mt-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#F87B1B] text-gray-900"
-                placeholder="••••••••"
                 required
+                placeholder="••••••••"
+                className="w-full px-4 py-3 
+                bg-[#0d0d0d] 
+                border border-white/10 
+                rounded-lg 
+                text-white 
+                placeholder-white/30
+                focus:outline-none 
+                focus:border-white 
+                focus:ring-1 
+                focus:ring-white/40
+                transition-all duration-300"
               />
             </div>
 
-            <div className="flex items-center justify-between text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" className="accent-[#F87B1B]" />
+            {/* Options */}
+            <div className="flex items-center justify-between text-sm text-white/60">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input type="checkbox" className="accent-white" />
                 Remember me
               </label>
-              <a href="#" className="text-[#F87B1B] hover:underline">
+              <a href="#" className="hover:text-white transition">
                 Forgot password?
               </a>
             </div>
 
+            {/* Button */}
             <Button
               type="submit"
-              className="w-full bg-[#0E1A36] hover:bg-[#1B2B57] text-white font-semibold py-2 transition-all"
+              className="w-full py-3 
+              text-black 
+              font-semibold 
+              rounded-lg 
+              hover:bg-white/10 
+              transition-all duration-300"
             >
               Login
             </Button>
 
-            <div className="text-center text-sm text-gray-500">
+            {/* Signup */}
+            <div className="text-center text-sm text-white/60">
               Don’t have an account?{' '}
-              <a href="#" className="text-[#F87B1B] hover:underline">
+              <a href="#" className="text-white hover:underline">
                 Sign up
               </a>
             </div>
-          </motion.form>
 
-          {/* Message */}
+          </form>
+
           {message && (
-            <motion.p
-              className={`mt-4 text-center font-medium ${
-                message.includes('successful')
-                  ? 'text-green-600'
-                  : 'text-red-500'
-              }`}
-              variants={item}
-            >
+            <p className="mt-6 text-center text-sm text-white/80">
               {message}
-            </motion.p>
+            </p>
           )}
         </motion.div>
 
-        <motion.p
-          className="text-center text-sm text-gray-400 mt-10"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.8 }}
-        >
+        <p className="mt-10 text-white/40 text-sm">
           © {new Date().getFullYear()} DHANOMI HealthCare.AI
-        </motion.p>
+        </p>
+
       </div>
-
-      <div className="hidden md:flex w-1/2 bg-[#0E1A36] text-white items-center justify-center p-10 relative overflow-hidden">
-  {/* 🔮 Shimmer Animated Background */}
-  <motion.div
-    className="absolute inset-0 bg-gradient-to-br from-[#0E1A36] via-[#14254D] to-[#0E1A36] opacity-60"
-    animate={{ backgroundPosition: ['0% 0%', '100% 100%'] }}
-    transition={{ repeat: Infinity, duration: 12, ease: 'linear' }}
-    style={{
-      backgroundSize: '400% 400%', // important for the shimmer movement
-      zIndex: 0,
-    }}
-  />
-
-  {/* Illustration + Text */}
-  <div className="max-w-md text-center relative z-10">
-    <motion.img
-      src="/login-illustration.svg"
-      alt="Healthcare illustration"
-      className="mx-auto mb-6 w-80"
-      initial={{ opacity: 0, x: -40 }}
-      animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 1, ease: 'easeOut' }}
-    />
-
-    <motion.h3
-      className="text-3xl font-extrabold mb-3 text-white tracking-wide"
-      style={{ fontFamily: "'Poppins', sans-serif" }}
-      initial={{ opacity: 0, scale: 0.9, y: 40 }}
-      animate={{ opacity: 1, scale: 1, y: 0 }}
-      transition={{ duration: 1.5, ease: 'easeOut' }}
-    >
-      Healing the Future with Intelligence
-    </motion.h3>
-
-    <motion.p
-  className="text-gray-200 text-[17px] leading-relaxed tracking-wide max-w-lg mx-auto mt-6 text-center"
-  style={{ fontFamily: "'Inter', sans-serif", lineHeight: '1.9' }}
-  initial={{ opacity: 0, y: 30 }}
-  animate={{ opacity: 1, y: 0 }}
-  transition={{ delay: 0.5, duration: 1.3, ease: 'easeOut' }}
->
-  At <span className="text-[#F87B1B] font-semibold">Dhanomi HealthCare.AI</span>, 
-  innovation meets empathy. We blend advanced artificial intelligence with human insight 
-  to empower doctors, enhance patient outcomes, and redefine personalized care.
-  <span className="block mt-4 text-gray-300 font-medium">
-    Smarter diagnostics. Seamless connections. Compassion, reimagined through technology.
-  </span>
-</motion.p>
-
-  </div>
-</div>
-
     </div>
   );
 }
